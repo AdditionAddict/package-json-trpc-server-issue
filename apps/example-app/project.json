@@ -13,20 +13,15 @@
         "outputPath": "dist/apps/example-app",
         "main": "apps/example-app/src/main.ts",
         "tsConfig": "apps/example-app/tsconfig.app.json",
-        "assets": ["apps/example-app/src/assets"]
+        "assets": ["apps/example-app/src/assets"],
+        "isolatedConfig": true,
+        "webpackConfig": "apps/example-app/webpack.config.js"
       },
       "configurations": {
+        "development": {},
         "production": {
           "generatePackageJson": true,
-          "optimization": true,
-          "extractLicenses": true,
-          "inspect": false,
-          "fileReplacements": [
-            {
-              "replace": "apps/example-app/src/environments/environment.ts",
-              "with": "apps/example-app/src/environments/environment.prod.ts"
-            }
-          ]
+          "generateLockfile": true
         }
       }
     },
