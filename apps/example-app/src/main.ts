@@ -1,21 +1,35 @@
-/**
- * This is not a production server yet!
- * This is only a minimal backend to get started.
- */
-
 import * as express from 'express';
-import * as path from 'path';
+import * as trpc from '@trpc/server';
+import * as trpcExpress from '@trpc/server/adapters/express';
+
+const t = trpc.initTRPC.create();
+
+const router = t.router;
+const publicProcedure = t.procedure;
+
+const appRouter = router({
+  greeting: publicProcedure.query(() => {
+    return {
+      text: `Hello world` as const,
+    };
+  }),
+});
+
+// for use on client side
+// export type AppRouter = typeof appRouter;
+
+export const trpcExpressMiddleware = trpcExpress.createExpressMiddleware({
+  router: appRouter,
+});
 
 const app = express();
 
-app.use('/assets', express.static(path.join(__dirname, 'assets')));
+app.use('/trpc', trpcExpressMiddleware);
 
-app.get('/api', (req, res) => {
-  res.send({ message: 'Welcome to example-app!' });
+app.listen(3000, 'localhost', () => {
+  console.log(`[ ready ] http://localhost:3000`);
 });
 
-const port = process.env.port || 3333;
-const server = app.listen(port, () => {
-  console.log(`Listening at http://localhost:${port}/api`);
-});
-server.on('error', console.error);
+// test via  http://localhost:3000/trpc/greeting
+// {"result":{"data":{"text":"Hello world"}}}
+// Note normal usage is to use trpc client to call
